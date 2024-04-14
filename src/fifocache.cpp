@@ -49,14 +49,14 @@ pair<int, bool> FIFOCache::write(unsigned int address)
         dirty[set][tag] = true;
 
         if (this->write_through)
-            return {(HIT_PENALTY + MISS_PENALTY * (block_size >> 2)), true};
+            return {(HIT_PENALTY + MISS_PENALTY), true};
 
         // write back
         return {HIT_PENALTY, true};
     }
 
     if (!this->write_allocate)
-        return {MISS_PENALTY * (block_size >> 2), false};
+        return {MISS_PENALTY, false};
 
     int wb_cycles = 0;
     if (q.size() == (this->blocks))
@@ -74,7 +74,7 @@ pair<int, bool> FIFOCache::write(unsigned int address)
     dirty[set][tag] = true;
 
     if (this->write_through)
-        return {(2 * MISS_PENALTY * (block_size >> 2) + HIT_PENALTY), false};
+        return {(MISS_PENALTY * (block_size >> 2) + HIT_PENALTY + MISS_PENALTY), false};
 
     // write back
     return {(HIT_PENALTY + MISS_PENALTY * (block_size >> 2) + wb_cycles), false};
