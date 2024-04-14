@@ -2,12 +2,11 @@
 #pragma once
 using namespace std;
 
-
 class Cache
 {
 protected:
-    const int MEM_CYCLE = 100;
-    const int CACHE_CYCLE = 1;
+    const int MISS_PENALTY = 100;
+    const int HIT_PENALTY = 1;
     unsigned int sets;
     unsigned int blocks;
     unsigned int block_size;
@@ -29,6 +28,6 @@ public:
         this->write_through = write_through;
         dirty.resize(sets);
     }
-    virtual pair<int,bool> read(unsigned int address) = 0;
-    virtual pair<int,bool> write(unsigned int address) = 0;
+    virtual pair<int, bool> read(unsigned int address) = 0;
+    virtual pair<int, bool> write(unsigned int address) = 0;
 };

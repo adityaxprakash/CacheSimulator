@@ -16,7 +16,7 @@ pair<int, bool> FIFOCache::read(unsigned int address)
 
     if (line.find(tag) != line.end())
     {
-        return {CACHE_CYCLE, true};
+        return {HIT_PENALTY, true};
     }
 
     int wb_cycles = 0;
@@ -26,14 +26,14 @@ pair<int, bool> FIFOCache::read(unsigned int address)
         q.pop();
         line.erase(evicted);
         if (dirty[set][evicted] && !this->write_through)
-            wb_cycles = MEM_CYCLE * (block_size >> 2);
+            wb_cycles = MISS_PENALTY * (block_size >> 2);
         dirty[set].erase(evicted);
     }
     q.push(tag);
     line[tag] = true;
     dirty[set][tag] = false;
 
-    return {(MEM_CYCLE * (block_size >> 2) + CACHE_CYCLE + wb_cycles), false};
+    return {(MISS_PENALTY * (block_size >> 2) + HIT_PENALTY + wb_cycles), false};
 }
 
 pair<int, bool> FIFOCache::write(unsigned int address)
@@ -49,14 +49,14 @@ pair<int, bool> FIFOCache::write(unsigned int address)
         dirty[set][tag] = true;
 
         if (this->write_through)
-            return {(CACHE_CYCLE + MEM_CYCLE), true};
+            return {(HIT_PENALTY + MISS_PENALTY * (block_size >> 2)), true};
 
         // write back
-        return {CACHE_CYCLE, true};
+        return {HIT_PENALTY, true};
     }
 
     if (!this->write_allocate)
-        return {MEM_CYCLE, false};
+        return {MISS_PENALTY * (block_size >> 2), false};
 
     int wb_cycles = 0;
     if (q.size() == (this->blocks))
@@ -65,7 +65,7 @@ pair<int, bool> FIFOCache::write(unsigned int address)
         q.pop();
         line.erase(evicted);
         if (dirty[set][evicted] && !this->write_through)
-            wb_cycles = MEM_CYCLE * (block_size >> 2);
+            wb_cycles = MISS_PENALTY * (block_size >> 2);
         dirty[set].erase(evicted);
     }
 
@@ -74,8 +74,8 @@ pair<int, bool> FIFOCache::write(unsigned int address)
     dirty[set][tag] = true;
 
     if (this->write_through)
-        return {(MEM_CYCLE * (block_size >> 2) + MEM_CYCLE), false};
+        return {(2 * MISS_PENALTY * (block_size >> 2) + HIT_PENALTY), false};
 
     // write back
-    return {(CACHE_CYCLE + MEM_CYCLE * (block_size >> 2) + wb_cycles), false};
+    return {(HIT_PENALTY + MISS_PENALTY * (block_size >> 2) + wb_cycles), false};
 }

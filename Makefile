@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -Wextra --pedantic
+CFLAGS = -Wall -Wextra --pedantic -g
 
 SRCDIR = src
 INCDIR = include
@@ -20,4 +20,4 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET) csim

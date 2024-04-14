@@ -19,7 +19,8 @@ pair<int, bool> LRUCache::read(unsigned int address)
     {
         l.erase(pos->second);
         l.push_front(tag);
-        return {CACHE_CYCLE, true};
+        line[tag] = l.begin();
+        return {HIT_PENALTY, true};
     }
 
     int wb_cycles = 0;
@@ -29,7 +30,7 @@ pair<int, bool> LRUCache::read(unsigned int address)
         l.pop_back();
         line.erase(evicted);
         if (dirty[set][evicted] && !this->write_through)
-            wb_cycles = MEM_CYCLE * (block_size >> 2);
+            wb_cycles = MISS_PENALTY * (block_size >> 2);
         dirty[set].erase(evicted);
     }
 
@@ -37,7 +38,7 @@ pair<int, bool> LRUCache::read(unsigned int address)
     line[tag] = l.begin();
     dirty[set][tag] = false;
 
-    return {(MEM_CYCLE * (block_size >> 2) + CACHE_CYCLE + wb_cycles), false};
+    return {(MISS_PENALTY * (block_size >> 2) + HIT_PENALTY + wb_cycles), false};
 }
 
 pair<int, bool> LRUCache::write(unsigned int address)
@@ -53,17 +54,18 @@ pair<int, bool> LRUCache::write(unsigned int address)
     {
         l.erase(pos->second);
         l.push_front(tag);
+        line[tag] = l.begin();
         dirty[set][tag] = true;
 
         if (this->write_through)
-            return {(CACHE_CYCLE + MEM_CYCLE), true};
+            return {(HIT_PENALTY + MISS_PENALTY * (block_size >> 2)), true};
 
         // write back
-        return {CACHE_CYCLE, true};
+        return {HIT_PENALTY, true};
     }
 
     if (!this->write_allocate)
-        return {MEM_CYCLE, false};
+        return {MISS_PENALTY * (block_size >> 2), false};
 
     int wb_cycles = 0;
     if (l.size() == (this->blocks))
@@ -72,7 +74,7 @@ pair<int, bool> LRUCache::write(unsigned int address)
         l.pop_back();
         line.erase(evicted);
         if (dirty[set][evicted] && !this->write_through)
-            wb_cycles = MEM_CYCLE * (block_size >> 2);
+            wb_cycles = MISS_PENALTY * (block_size >> 2);
         dirty[set].erase(evicted);
     }
 
@@ -81,8 +83,8 @@ pair<int, bool> LRUCache::write(unsigned int address)
     dirty[set][tag] = true;
 
     if (this->write_through)
-        return {(MEM_CYCLE * (block_size >> 2) + MEM_CYCLE), false};
+        return {(2 * MISS_PENALTY * (block_size >> 2) + MISS_PENALTY), false};
 
     // write back
-    return {(CACHE_CYCLE + MEM_CYCLE * (block_size >> 2) + wb_cycles), false};
+    return {(HIT_PENALTY + MISS_PENALTY * (block_size >> 2) + wb_cycles), false};
 }
