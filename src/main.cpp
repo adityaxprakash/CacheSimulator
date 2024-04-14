@@ -28,6 +28,17 @@ int main(int argc, char *argv[])
     string write_through = argv[5];
     string policy = argv[6];
 
+    if (write_allocate != "write-allocate" && write_allocate != "no-write-allocate")
+    {
+        cout << "Invalid write allocate policy\n";
+        return 0;
+    }
+    if (write_through != "write-through" && write_through != "write-back")
+    {
+        cout << "Invalid write through policy\n";
+        return 0;
+    }
+    
     bool wa = write_allocate == "write-allocate";
     bool wt = write_through == "write-through";
 
@@ -97,6 +108,7 @@ int main(int argc, char *argv[])
     else
     {
         cout << "Invalid policy\n";
+        return 0;
     }
     cout << "Total loads: " << loads << "\n";
     cout << "Total stores: " << stores << "\n";

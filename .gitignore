@@ -1,9 +1,7 @@
 .vscode
 dist
 *.log
-*.log.*
 *.trace
 *.txt
 cacheSim
-csim
-**/*.o
+obj

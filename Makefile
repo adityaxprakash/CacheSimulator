@@ -3,21 +3,25 @@ CFLAGS = -Wall -Wextra --pedantic -g
 
 SRCDIR = src
 INCDIR = include
+OBJDIR = obj
 
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
-
-OBJS = $(SRCS:.cpp=.o)
-
+OBJS = $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
 TARGET = cacheSim
 
-# Default target
-all: $(TARGET)
+.PHONY: all clean directories
 
-%.o: %.cpp
-	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
+# Default target
+all: directories $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(OBJS) -o $@
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
+
+directories:
+	mkdir -p $(OBJDIR)
 
 clean:
-	rm -f $(OBJS) $(TARGET) csim
+	rm -rf $(OBJDIR) $(TARGET)
