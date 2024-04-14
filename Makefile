@@ -1,5 +1,5 @@
-CC = g++
-CFLAGS = -Wall -Wextra --pedantic -g
+CC = gcc
+CFLAGS = -Wall -Wextra --pedantic
 
 SRCDIR = src
 INCDIR = include
@@ -11,11 +11,10 @@ TARGET = cacheSim
 
 .PHONY: all clean directories
 
-# Default target
-all: directories $(TARGET)
+all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $@
+$(TARGET): directories $(OBJS)
+	$(CC) $(OBJS) -o $@ -lstdc++
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
