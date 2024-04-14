@@ -21,7 +21,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
 
 directories:
-	mkdir -p $(OBJDIR)
+	@mkdir -p $(OBJDIR)
 
 clean:
-	rm -rf $(OBJDIR) $(TARGET)
+	@rm -rf $(OBJDIR) $(TARGET)

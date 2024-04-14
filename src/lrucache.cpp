@@ -83,7 +83,7 @@ pair<int, bool> LRUCache::write(unsigned int address)
 	dirty[set][tag] = true;
 
 	if (this->write_through)
-		return {(MISS_PENALTY * (block_size >> 2) + MISS_PENALTY + MISS_PENALTY), false};
+		return {(MISS_PENALTY * (block_size >> 2) + MISS_PENALTY + HIT_PENALTY), false};
 
 	// write back
 	return {(HIT_PENALTY + MISS_PENALTY * (block_size >> 2) + wb_cycles), false};

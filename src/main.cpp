@@ -1,19 +1,6 @@
 #include "lrucache.h"
 #include "fifocache.h"
 
-string toLower(string &s)
-{
-    string a = s;
-    int n = s.size();
-
-    for (int i = 0; i < n; i++)
-    {
-        if (a[i] >= 'A' && a[i] <= 'Z')
-            a[i] = tolower(a[i]);
-    }
-    return a;
-}
-
 int main(int argc, char *argv[])
 {
     if (argc != 7)
@@ -38,20 +25,20 @@ int main(int argc, char *argv[])
         cout << "Invalid write through policy\n";
         return 0;
     }
-    
+
     bool wa = write_allocate == "write-allocate";
     bool wt = write_through == "write-through";
 
-    int loads = 0, stores = 0, load_hits = 0, store_hits = 0, load_misses = 0, store_misses = 0, total_cycles = 0;
+    int loads = 0, stores = 0, load_hits = 0, store_hits = 0, load_misses = 0, store_misses = 0;
+    long long total_cycles = 0;
     if (policy == "lru")
     {
         LRUCache cache(sets, blocks, block_size, wa, wt);
         string type;
-        string address_str;
+        unsigned int address;
         string ignore;
-        while (cin >> type >> address_str >> ignore)
+        while (cin >> type >> hex >> address >> ignore)
         {
-            unsigned int address = stoul(toLower(address_str).substr(2), nullptr, 16);
             if (type == "s")
             {
                 stores++;
@@ -78,11 +65,10 @@ int main(int argc, char *argv[])
     {
         FIFOCache cache(sets, blocks, block_size, wa, wt);
         string type;
-        string address_str;
+        unsigned int address;
         string ignore;
-        while (cin >> type >> address_str >> ignore)
+        while (cin >> type >> hex >> address >> ignore)
         {
-            int address = stoul(toLower(address_str).substr(2), nullptr, 16);
             if (type == "s")
             {
                 stores++;
