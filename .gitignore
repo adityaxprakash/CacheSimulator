@@ -1,7 +1,9 @@
 .vscode
-dist
-*.log
 *.trace
 *.txt
 cacheSim
 obj
+*.py
+*.png
+*.csv
+*.pdf
