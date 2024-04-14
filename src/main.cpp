@@ -5,8 +5,8 @@ int main(int argc, char *argv[])
 {
     if (argc != 7)
     {
-        cout << "Wrong number of arguments\n";
-        return 0;
+        cerr << "Wrong number of arguments.\n";
+        return 1;
     }
     unsigned int sets = atoi(argv[1]);
     unsigned int blocks = atoi(argv[2]);
@@ -17,13 +17,25 @@ int main(int argc, char *argv[])
 
     if (write_allocate != "write-allocate" && write_allocate != "no-write-allocate")
     {
-        cout << "Invalid write allocate policy\n";
-        return 0;
+        cerr << "Invalid write allocate policy\n";
+        return 2;
     }
     if (write_through != "write-through" && write_through != "write-back")
     {
-        cout << "Invalid write through policy\n";
-        return 0;
+        cerr << "Invalid write through policy.\n";
+        return 2;
+    }
+
+    if (sets == 0 || blocks == 0 || block_size == 0 || (sets & (sets - 1)) != 0 || (blocks & (blocks - 1)) != 0 || (block_size & (block_size - 1)) != 0)
+    {
+        cerr << "Invalid cache configuration: Values must be some non-negative power of 2.\n";
+        return 3;
+    }
+
+    if (block_size < 4)
+    {
+        cerr << "Invalid cache configuration: Block size must be atleast 4.\n";
+        return 3;
     }
 
     bool wa = write_allocate == "write-allocate";
@@ -93,8 +105,8 @@ int main(int argc, char *argv[])
     }
     else
     {
-        cout << "Invalid policy\n";
-        return 0;
+        cerr << "Invalid policy\n";
+        return 2;
     }
     cout << "Total loads: " << loads << "\n";
     cout << "Total stores: " << stores << "\n";
