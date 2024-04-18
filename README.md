@@ -12,12 +12,13 @@ Next you can run the executable with:
 ```bash
 ./cacheSim <cache_sets> <blocks_per_set> <block_size> <write-allocate or no-write-allocate> <write-through or write-back> <lru or fifo> < <some trace file>
 ```
-
+Make sure `cache_sets` `blocks_per_set` and `block_size` are positive powers of 2 with `block_size` being atleast 4.
 This will print the output containing information about _hits_ and _misses_ on the terminal.
 
 ## Cleaning Files:
 ```bash
 make clean   # removes all object files as well as executables
 ```
+
 ## Experiments:
-The outcome of the experiments conducted using this have been compiled into a report which can be found here.
+The outcome of the experiments conducted using this have been compiled into a report which can be found [here](/COL216_Best_Cache_Report.pdf).
